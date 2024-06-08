@@ -139,22 +139,25 @@ namespace E_Commerce.Controllers
                 // Check if the user exists and the password matches
                 if (user != null && user.Password == login.Password)
                 {
+                    // Store the user's email and role in session
+                    HttpContext.Session.SetString("UserEmail", user.Email);
+                    HttpContext.Session.SetInt32("UserRole", user.RoleId); // Assuming RoleId is an integer
                     // Check the role of the user
                     if (user.RoleId == 1) // Assuming 1 is the role ID for admin
                     {
                         // Store the admin's email in session
-                        HttpContext.Session.SetString("UserEmail", login.Email);
+                       // HttpContext.Session.SetString("UserEmail", login.Email);
 
                         // Redirect to the product dashboard
-                        return RedirectToAction("Create", "Product");
+                        return RedirectToAction("Index", "Product");
                     }
                     else if (user.RoleId == 2) // Assuming 2 is the role ID for customer
                     {
                         // Store the customer's email in session
-                        HttpContext.Session.SetString("UserEmail", login.Email);
+                       // HttpContext.Session.SetString("UserEmail", login.Email);
 
                         // Redirect to the product list
-                        return RedirectToAction("Index", "Product");
+                        return RedirectToAction("ProductList", "Product");
                     }
                 }
 

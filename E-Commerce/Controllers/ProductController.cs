@@ -11,12 +11,14 @@ namespace E_Commerce.Controllers
     {
         public readonly IProductService service;
         private readonly ICategoryService categoryService;
+        private readonly ICartService cartService;
         private Microsoft.AspNetCore.Hosting.IHostingEnvironment env;
 
-        public ProductController(IProductService service, ICategoryService categoryService, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
+        public ProductController(IProductService service, ICategoryService categoryService, ICartService cartService, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
             this.service = service;
             this.categoryService = categoryService;
+            this.cartService = cartService;
             this.env = env;
         }
         // GET: ProductController
@@ -29,8 +31,16 @@ namespace E_Commerce.Controllers
         // GET: ProductController/Details/5
         public ActionResult Details(int id)
         {
+            //var product = service.GetProductById(id);
+            //return View(product);
+
             var product = service.GetProductById(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
             return View(product);
+
         }
 
         // GET: ProductController/Create
@@ -164,5 +174,20 @@ namespace E_Commerce.Controllers
                 return View();
             }
         }
+
+        public ActionResult ProductList(string searchTerm)
+        {
+            //var model = service.GetProducts();
+            //return View(model);
+
+            var model = string.IsNullOrEmpty(searchTerm) ? service.GetProducts() : service.GetProductByName(searchTerm);
+            ViewBag.SearchTerm = searchTerm;
+            return View(model);
+        }
+
+
+
+    
     }
+
 }

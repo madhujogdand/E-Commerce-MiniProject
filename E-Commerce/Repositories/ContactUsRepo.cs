@@ -1,6 +1,5 @@
 ﻿using E_Commerce.Data;
 using E_Commerce.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace E_Commerce.Repositories
 {
@@ -12,43 +11,34 @@ namespace E_Commerce.Repositories
         {
             this.db = db;
         }
-        public int AddMessage(ContactUs message)
+        public int AddMessage(ContactUs contactus)
         {
-
-
             int result = 0;
-            db.ContactUs.Add(message);
+            db.ContactUs.Add(contactus);
             result = db.SaveChanges();
             return result;
-
         }
 
         public int DeleteMessage(int id)
         {
-
-           
-            var model = db.ContactUs.Where(contactus => contactus.Id == id).FirstOrDefault();
+            int result = 0;
+            var model = db.ContactUs.Where(cont => cont.Id == id).FirstOrDefault();
             if (model != null)
             {
                 db.ContactUs.Remove(model);
-                return db.SaveChanges();
+                result = db.SaveChanges();
             }
-            return 0;
+            return result;
         }
 
         public IEnumerable<ContactUs> GetAllMessages()
         {
-            return db.ContactUs.ToList(); 
+           return db.ContactUs.ToList();
         }
 
         public ContactUs GetMessageById(int id)
         {
-            return db.ContactUs.Find(id);
-        }
-
-        public void Save()
-        {
-            db.SaveChanges();
+            return db.ContactUs.Where(x => x.Id == id).SingleOrDefault();
         }
     }
 }

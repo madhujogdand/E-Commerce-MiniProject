@@ -11,29 +11,24 @@ namespace E_Commerce.Services
         {
             this.repo = repo;
         }
-        public int AddMessage(ContactUs message)
+        public int AddMessage(ContactUs contactus)
         {
-         return  repo.AddMessage(message);
+            return repo.AddMessage(contactus);
         }
 
         public int DeleteMessage(int id)
         {
-          return  repo.DeleteMessage(id);
+       return repo.DeleteMessage(id);
         }
 
         public IEnumerable<ContactUs> GetAllMessages()
         {
-        return repo.GetAllMessages();
+            return repo.GetAllMessages();
         }
 
         public ContactUs GetMessageById(int id)
         {
           return repo.GetMessageById(id);
-        }
-
-        public void Save()
-        {
-         repo.Save();
         }
     }
 }

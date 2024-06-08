@@ -16,3 +16,12 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.small-search-box {
+    width: 500px; /* Adjust the width as needed */
+}
+
+.custom-img-size {
+    width: 80%;
+    height: auto;
+}

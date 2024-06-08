@@ -6,8 +6,8 @@ namespace E_Commerce.Repositories
     {
         IEnumerable<ContactUs> GetAllMessages();
         ContactUs GetMessageById(int id);
-        int AddMessage(ContactUs message);
+        int AddMessage(ContactUs contactus);
+      
         int DeleteMessage(int id);
-        void Save();
     }
 }

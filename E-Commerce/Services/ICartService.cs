@@ -6,7 +6,7 @@ namespace E_Commerce.Services
     {
         bool CheckIfExists(Cart cart);
         public int AddToCart(Cart cart);
-        //public IEnumerable<ProductCart> ViewCart(int userid);
+        public IEnumerable<ProductCart> GetCartItems(int userid);
 
         public int RemoveFromCart(int id);
 
@@ -17,5 +17,6 @@ namespace E_Commerce.Services
         public int RemoveFromCartAfterOrder(int userid, int productid);
 
         public int GetCartCount(int userid);
+        int UpdateQuantity(int cartId, int quantity);
     }
 }

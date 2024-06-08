@@ -12,16 +12,38 @@ namespace E_Commerce.Repositories
         }
         public int AddToCart(Cart cart)
         {
-         bool exists=CheckIfExists(cart);
+            //bool exists = CheckIfExists(cart);
+            //if (!exists)
+            //{
+            //    db.Carts.Add(cart);
+            //    int res = db.SaveChanges();
+            //    return res;
+            //}
+            //else
+            //{
+            //    return 2;
+            //}
+            bool exists = CheckIfExists(cart);
             if (!exists)
             {
                 db.Carts.Add(cart);
                 int res = db.SaveChanges();
                 return res;
             }
-            else 
+            else
             {
-                return 2;
+                // If the product already exists in the cart, update its quantity instead
+                var existingCartItem = db.Carts.FirstOrDefault(c => c.UserId == cart.UserId && c.ProductId == cart.ProductId);
+                if (existingCartItem != null)
+                {
+                    existingCartItem.Quantity += cart.Quantity;
+                    return db.SaveChanges();
+                }
+                else
+                {
+                    // Handle case where the existing cart item is null
+                    return 0;
+                }
             }
         }
 
@@ -43,6 +65,8 @@ namespace E_Commerce.Repositories
 
             }
             return exists;
+
+            //return db.Carts.Any(c => c.UserId == cart.UserId && c.ProductId == cart.ProductId);
         }
 
         //public ProductCart ConfirmOrder(int id)
@@ -69,6 +93,8 @@ namespace E_Commerce.Repositories
             return res;
         }
 
+     
+
         //public int PlaceOrder(Orders order)
         //{
         // db.orders.Add(order);
@@ -89,29 +115,48 @@ namespace E_Commerce.Repositories
 
         public int RemoveFromCartAfterOrder(int userid, int productid)
         {
-          var result=(from c in db.Carts
-                      where c.UserId==userid && c.ProductId==productid
-                      select c).FirstOrDefault();
-            db.Carts.Remove((Cart)result);
-            int res=db.SaveChanges();
-            return res;
+            //var result=(from c in db.Carts
+            //            where c.UserId==userid && c.ProductId==productid
+            //            select c).FirstOrDefault();
+            //  db.Carts.Remove((Cart)result);
+            //  int res=db.SaveChanges();
+            //  return res;
+            var result = db.Carts.FirstOrDefault(c => c.UserId == userid && c.ProductId == productid);
+            if (result != null)
+            {
+                db.Carts.Remove(result);
+                return db.SaveChanges();
+            }
+            return 0;
         }
 
-        //public IEnumerable<ProductCart> ViewCart(int userid)
-        //{
-        //  var result=(from c  in db.Carts
-        //              join p in db.Products on  c.ProductId equals p.ProductId
-        //              where c.UserId == userid
-        //              select new ProductCart
-        //              { 
-        //                Image=p.Image,
-        //                Productname=p.ProductName,
-        //                Price=p.Price,
-        //                CartId=c.CartId,
-        //                UserId=c.UserId,
-        //                ProductId=p.ProductId,
-        //              }).ToList();
-        //    return result;
-        //}
+        public IEnumerable<ProductCart> GetCartItems(int userid)
+        {
+            var result = (from c in db.Carts
+                          join p in db.Products on c.ProductId equals p.ProductId
+                          where c.UserId == userid
+                          select new ProductCart
+                          {
+                              Image = p.Image,
+                              ProductName = p.ProductName,
+                              Price = p.Price,
+                              CartId = c.CartId,
+                              UserId = c.UserId,
+                              ProductId = p.ProductId,
+                              Quantity=c.Quantity
+                          }).ToList();
+            return result;
+        }
+
+        public int UpdateQuantity(int cartId, int quantity)
+        {
+            var cartItem = db.Carts.FirstOrDefault(c => c.CartId == cartId);
+            if (cartItem != null)
+            {
+                cartItem.Quantity = quantity;
+                return db.SaveChanges();
+            }
+            return 0; // Cart item not found
+        }
     }
 }

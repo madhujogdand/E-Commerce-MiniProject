@@ -22,8 +22,8 @@ namespace E_Commerce.Controllers
         // GET: ContactUsController/Details/5
         public ActionResult Details(int id)
         {
-            var message = service.GetMessageById(id);
-            return View(message);
+            var contactus = service.GetMessageById(id);
+            return View(contactus);
         }
 
         // GET: ContactUsController/Create
@@ -35,12 +35,11 @@ namespace E_Commerce.Controllers
         // POST: ContactUsController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(ContactUs message)
+        public ActionResult Create(ContactUs contact)
         {
             try
             {
-               
-                int result = service.AddMessage(message);
+                int result = service.AddMessage(contact);
                 if (result >= 1)
                 {
                     return RedirectToAction(nameof(ThankYou));
@@ -48,24 +47,23 @@ namespace E_Commerce.Controllers
                 else
                 {
                     ViewBag.ErrorMsg = "Something went wrong";
-                    return View(message); 
+                    return View();
                 }
             }
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-                return View(message); // Pass the message back in case of exception
+                return View();
             }
         }
-        
-        
 
-      
+     
+
         // GET: ContactUsController/Delete/5
         public ActionResult Delete(int id)
         {
-            var message = service.GetMessageById(id);
-            return View(message);
+            var contactus = service.DeleteMessage(id);
+            return View(contactus);
         }
 
         // POST: ContactUsController/Delete/5
@@ -76,24 +74,21 @@ namespace E_Commerce.Controllers
         {
             try
             {
-               
                 int result = service.DeleteMessage(id);
                 if (result >= 1)
                 {
-                    return RedirectToAction(nameof(ThankYou));
+                    return RedirectToAction(nameof(Index));
                 }
                 else
                 {
                     ViewBag.ErrorMsg = "Something went wrong";
-                    var message = service.GetMessageById(id); // Re-fetch the message
-                    return View(message); // Pass the message back in case of error
+                    return View();
                 }
             }
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-                var message = service.GetMessageById(id); // Re-fetch the message
-                return View(message); // Pass the message back in case of exception
+                return View();
             }
         }
 

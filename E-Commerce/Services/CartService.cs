@@ -28,7 +28,10 @@ namespace E_Commerce.Services
         return repo.GetCartCount(userid);
         }
 
-       
+        public IEnumerable<ProductCart> GetCartItems(int userid)
+        {
+        return repo.GetCartItems(userid);
+        }
 
         public int RemoveFromCart(int id)
         {
@@ -40,6 +43,9 @@ namespace E_Commerce.Services
           return repo.RemoveFromCartAfterOrder(userid, productid);    
         }
 
-      
+        public int UpdateQuantity(int cartId, int quantity)
+        {
+        return repo.UpdateQuantity(cartId, quantity);
+        }
     }
 }
