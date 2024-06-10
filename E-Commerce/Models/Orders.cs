@@ -11,10 +11,11 @@ namespace E_Commerce.Models
 
         public int UserId { get; set; }
 
+        [DataType(DataType.DateTime)]
         public DateTime OrderDate { get; set; }
 
-        [ForeignKey("UserId")]
-        public virtual Users User { get; set; }
+        [Column(TypeName = "decimal(10, 2)")]
+        public decimal TotalAmount { get; set; }
 
         public virtual ICollection<OrderItems> OrderItems { get; set; }
     }

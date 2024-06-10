@@ -1,5 +1,6 @@
 ﻿using E_Commerce.Models;
 using E_Commerce.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -21,30 +22,32 @@ namespace E_Commerce.Controllers
 
         private int GetCurrentUserId()
         {
-            //var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            //var user = userService.GetUserByEmail(email);
-            //return user?.Id ?? 0;
+           // Retrieve the user ID from the session
+            var userId = HttpContext.Session.GetInt32("UserId");
 
-            // Get the user's ID from the claims
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
+            if (userId == null)
             {
-                return userId;
+                throw new Exception("User is not authenticated");
             }
-            else
-            {
-                // If user ID not found or cannot be parsed, return a default value or handle the error accordingly
-                // For example, you can redirect the user to a login page or return -1 indicating an error
-                return -1;
-            }
+
+            return userId.Value;
+
         }
 
         // GET: CartController
         public IActionResult Index()
         {
-            int userId = GetCurrentUserId();
-            var cartItems = cartService.GetCartItems(userId);
-            return View(cartItems);
+            try
+            {
+                int userId = GetCurrentUserId();
+                var cartItems = cartService.GetCartItems(userId);
+                return View(cartItems);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View();
+            }
         }
 
         // GET: CartController/Details/5
@@ -57,48 +60,36 @@ namespace E_Commerce.Controllers
         // POST: CartController/AddToCart
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddToCart(int productId, int quantity)
+
+        public IActionResult AddToCart(int productId,int userId)
         {
             try
             {
-                int userId = GetCurrentUserId();
-
-                // Create a Cart object to add to the database
+                userId = GetCurrentUserId();
                 var cart = new Cart
                 {
                     UserId = userId,
                     ProductId = productId,
-                    Quantity = quantity
+                    //Quantity = quantity
                 };
-
-                // Add the product to the cart using the CartService
-                int result = cartService.AddToCart(cart);
-
-                // Check the result of the operation
+                var result = cartService.AddToCart(cart);
                 if (result > 0)
                 {
-                    // Product successfully added to the cart
-                    return RedirectToAction(nameof(Index));
-                }
-                else if (result == 2)
-                {
-                    // Product already in cart
-                    ViewBag.ErrorMsg = "Product already in cart.";
+                    // Successfully added to cart
+                    return RedirectToAction("Index");
                 }
                 else
                 {
-                    // Failed to add product to cart
-                    ViewBag.ErrorMsg = "Failed to add product to cart.";
+                    // Handle failure to add to cart
+                    ViewBag.ErrorMessage = "Unable to add product to cart. Please try again.";
+                    return View("Index");
                 }
             }
             catch (Exception ex)
             {
-                // Log the exception
-                ViewBag.ErrorMsg = "An error occurred while adding the product to the cart. Please try again later.";
+                ViewBag.ErrorMessage = ex.Message;
+                return View("Index");
             }
-
-            // Redirect the user back to the Index view
-            return RedirectToAction(nameof(Index));
         }
 
         // POST: CartController/RemoveFromCart
@@ -145,6 +136,32 @@ namespace E_Commerce.Controllers
                 return View();
             }
         }
+        [HttpPost]
+        public IActionResult ConfirmOrder(int cartId)
+        {
+            try
+            {
+                var orderItem = cartService.ConfirmOrder(cartId);
+                if (orderItem != null)
+                {
+                    // Here you can implement further logic for order processing
+                    // For example, creating an Order and OrderItems in the database
+                    // and removing the items from the cart
 
+                    // After processing the order, redirect to an order confirmation page or the cart index
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = "Unable to confirm order. Please try again.";
+                    return View("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View("Index");
+            }
+        }
     }
 }

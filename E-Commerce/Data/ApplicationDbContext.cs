@@ -17,6 +17,8 @@ namespace E_Commerce.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<ContactUs> ContactUs { get; set; }
         public DbSet<Cart> Carts { get; set; }
-     
+        public DbSet<OrderItems> OrderItems { get; set; }
+        public DbSet<Orders> Orders { get; set; }
+
     }
 }

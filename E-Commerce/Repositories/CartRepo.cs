@@ -66,24 +66,25 @@ namespace E_Commerce.Repositories
             }
             return exists;
 
-            //return db.Carts.Any(c => c.UserId == cart.UserId && c.ProductId == cart.ProductId);
+         
         }
 
-        //public ProductCart ConfirmOrder(int id)
-        //{
-        //    var result = (from p in db.Products
-        //                  where p.ProductId == id
-        //                  select new ProductCart
-        //                  {
-        //                      ProductId = p.ProductId,
-        //                      ProductName = p.ProductName,
-        //                      Price = p.Price,
-        //                      Image = p.Image,
-        //                      Quantity = 1,
+        public ProductCart ConfirmOrder(int id)
+        {
+            var result = (from p in db.Products
+                          where p.ProductId == id
+                          select new ProductCart
+                          {
+                              ProductId = p.ProductId,
+                              ProductName = p.ProductName,
+                              Price = p.Price,
+                              Image = p.Image,
+                              Quantity = 1,
 
-        //                  }).FirstOrDefault();
-        //    return result;  
-        //}
+                          }).FirstOrDefault();
+            return result;
+        }
+
 
         public int GetCartCount(int userid)
         {

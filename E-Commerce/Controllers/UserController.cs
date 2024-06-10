@@ -1,7 +1,9 @@
 ﻿using E_Commerce.Models;
 using E_Commerce.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace E_Commerce.Controllers
 {
@@ -139,9 +141,11 @@ namespace E_Commerce.Controllers
                 // Check if the user exists and the password matches
                 if (user != null && user.Password == login.Password)
                 {
-                    // Store the user's email and role in session
+                    
+                    // Store the user's email, userid and role in session
                     HttpContext.Session.SetString("UserEmail", user.Email);
-                    HttpContext.Session.SetInt32("UserRole", user.RoleId); // Assuming RoleId is an integer
+                    HttpContext.Session.SetInt32("UserRole", user.RoleId);
+                    HttpContext.Session.SetInt32("UserId", user.Id);
                     // Check the role of the user
                     if (user.RoleId == 1) // Assuming 1 is the role ID for admin
                     {

@@ -21,7 +21,10 @@ namespace E_Commerce.Services
           return repo.CheckIfExists(cart);
         }
 
-      
+        public ProductCart ConfirmOrder(int id)
+        {
+         return repo.ConfirmOrder(id);
+        }
 
         public int GetCartCount(int userid)
         {
