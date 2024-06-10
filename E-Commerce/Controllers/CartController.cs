@@ -3,7 +3,7 @@ using E_Commerce.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+
 
 namespace E_Commerce.Controllers
 {
@@ -11,13 +11,13 @@ namespace E_Commerce.Controllers
     {
         private readonly ICartService cartService;
         private readonly IUserService userService;
-        private readonly IProductService productService;
+     
 
-        public CartController(ICartService cartService, IUserService userService, IProductService productService)
+        public CartController(ICartService cartService, IUserService userService)
         {
             this.cartService = cartService;
             this.userService = userService;
-            this.productService = productService;
+          
         }
 
         private int GetCurrentUserId()
@@ -41,6 +41,7 @@ namespace E_Commerce.Controllers
             {
                 int userId = GetCurrentUserId();
                 var cartItems = cartService.GetCartItems(userId);
+             
                 return View(cartItems);
             }
             catch (Exception ex)
@@ -50,12 +51,7 @@ namespace E_Commerce.Controllers
             }
         }
 
-        // GET: CartController/Details/5
-        public ActionResult Details(int id)
-        {
-            var product = productService.GetProductById(id);
-            return View(product);
-        }
+       
 
         // POST: CartController/AddToCart
         [HttpPost]
@@ -70,7 +66,7 @@ namespace E_Commerce.Controllers
                 {
                     UserId = userId,
                     ProductId = productId,
-                    //Quantity = quantity
+                   
                 };
                 var result = cartService.AddToCart(cart);
                 if (result > 0)
@@ -116,51 +112,30 @@ namespace E_Commerce.Controllers
             }
         }
 
-        public IActionResult UpdateQuantity(int cartId, int quantity)
+       
+        public ActionResult ConfirmOrder()
         {
-            try
-            {
-                int result = cartService.UpdateQuantity(cartId, quantity);
-                if (result > 0)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    ViewBag.ErrorMsg = "Failed to update quantity.";
-                    return RedirectToAction(nameof(Index));
-                }
-            }
-            catch
-            {
-                return View();
-            }
+         
+            return View();
         }
         [HttpPost]
         public IActionResult ConfirmOrder(int cartId)
         {
             try
             {
-                var orderItem = cartService.ConfirmOrder(cartId);
-                if (orderItem != null)
+                var cartItem = cartService.ConfirmOrder(cartId);
+                if (cartItem != null)
                 {
-                    // Here you can implement further logic for order processing
-                    // For example, creating an Order and OrderItems in the database
-                    // and removing the items from the cart
+                    return View("ConfirmOrder", cartItem);
+                }
 
-                    // After processing the order, redirect to an order confirmation page or the cart index
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    ViewBag.ErrorMessage = "Unable to confirm order. Please try again.";
-                    return View("Index");
-                }
+                ViewBag.ErrorMsg = "Failed to confirm order.";
+                return RedirectToAction("Index"); 
             }
             catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-                return View("Index");
+                return View("Index"); 
             }
         }
     }

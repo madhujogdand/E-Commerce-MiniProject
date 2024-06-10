@@ -17,6 +17,6 @@ namespace E_Commerce.Services
         public int RemoveFromCartAfterOrder(int userid, int productid);
 
         public int GetCartCount(int userid);
-        int UpdateQuantity(int cartId, int quantity);
+    
     }
 }

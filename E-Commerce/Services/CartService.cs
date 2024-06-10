@@ -46,9 +46,6 @@ namespace E_Commerce.Services
           return repo.RemoveFromCartAfterOrder(userid, productid);    
         }
 
-        public int UpdateQuantity(int cartId, int quantity)
-        {
-        return repo.UpdateQuantity(cartId, quantity);
-        }
+      
     }
 }
