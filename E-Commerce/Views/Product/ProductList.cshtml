@@ -13,29 +13,50 @@
     </form>
 </div>
 
+@if (TempData["NotifyMessage"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["NotifyMessage"]
+    </div>
+}
+
 <div class="container">
     <div class="row">
         @foreach (var item in Model)
         {
-            <div class="col-md-2 mb-3">
+            <div class="col-md-3 mb-3">
                 <div class="card h-100">
                     <img class="card-img-top" src="@Url.Content(item.Image)" alt="@item.ProductName" style="height: 200px; style="width: 50px; object-fit: cover;">
                     <div class="card-body">
                         <h5 class="card-title">@item.ProductName</h5>
                         <p class="card-text"><strong>Price:</strong> @item.Price</p>
-                        <p class="card-text"><strong>Stock:</strong> @item.Stock</p>
                         <p class="card-text">@item.Description</p>
-                       @*  <div>
-                            <button type="button" class="btn btn-primary">View More</button>
-                        </div> *@
+                   
                         <div>
                             <a href="@Url.Action("Details", "Product", new { id = item.ProductId })" class="btn btn-primary">View More</a>
                         </div>
                     </div>
-                  
+                    <div class="my-2 text-center">
+                        @if (item.Stock > 0)
+                        {
+                            <p class="text-success bg-light p-2 rounded"><strong>Stock Available</strong></p>
+                        }
+                        else
+                        {
+                            <p class="text-danger bg-light p-2 rounded"><strong>Stock Unavailable</strong></p>
+                        }
+                    </div>
+                    <div class="mt-auto">
+                        @if (item.Stock <= 0)
+                        {
+                           <button type="button" class="btn btn-secondary w-100" disabled>Notify Me</button>
+                        }
+                    </div>
                 </div>
             </div>
         }
     </div>
 </div>
+
+
 

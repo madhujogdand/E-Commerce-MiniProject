@@ -1,0 +1,66 @@
+﻿@model IEnumerable<E_Commerce.Models.Orders>
+
+@{
+    ViewBag.Title = "My Orders";
+}
+
+<h2>My Orders</h2>
+
+@if (Model.Any())
+{
+    <div class="row">
+        @foreach (var order in Model)
+        {
+            <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Order ID: @order.OrderId</h5>
+                        <p class="card-text">Order Date: @order.OrderDate.ToString("dd/MM/yyyy")</p>
+                        <p class="card-text">Total Amount: @order.TotalAmount</p>
+                        <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#orderItems-@order.OrderId">
+                            View Details
+                        </button>
+                        <div id="orderItems-@order.OrderId" class="collapse">
+                            <table class="table mt-2">
+                                <thead>
+                                    <tr>
+                                        <th>Product ID</th>
+                                        <th>Order Status</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (order.OrderItems != null)
+                                    {
+                                        // Iterate over order items
+                                        @foreach (var item in order.OrderItems)
+                                        {
+                                            <tr>
+                                                <td>@item.ProductId</td>
+                                                <td>@item.OrderStatus.Status</td> 
+                                                <td>@item.Quantity</td>
+                                                <td>@item.Price</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No orders found.</p>
+}
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}

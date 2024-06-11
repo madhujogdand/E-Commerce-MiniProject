@@ -14,6 +14,7 @@ namespace E_Commerce.Repositories
         }
         public int AddUser(Users user)
         {
+            user.IsActive = 1;
             int result = 0;
             user.RoleId = 2;
             db.Users.Add(user);
@@ -27,7 +28,8 @@ namespace E_Commerce.Repositories
             var model = db.Users.Where(user => user.Id == id).FirstOrDefault();
             if (model != null)
             {
-                db.Users.Remove(model);
+                model.IsActive = 0;
+              //  db.Users.Remove(model);
                 result = db.SaveChanges();
             }
             return result;
@@ -42,6 +44,7 @@ namespace E_Commerce.Repositories
                 model.Name = user.Name;
                 model.Email = user.Email;
                 model.Password = user.Password;
+                model.IsActive = 1;
                 result = db.SaveChanges();
             }
             return result;
@@ -59,6 +62,7 @@ namespace E_Commerce.Repositories
         public IEnumerable<Users> GetUsers()
         {
             var model = (from user in db.Users
+                         where user.IsActive == 1
                          select user).ToList();
             return model;
         }

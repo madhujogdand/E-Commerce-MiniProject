@@ -17,6 +17,6 @@ namespace E_Commerce.Models
         [Column(TypeName = "decimal(10, 2)")]
         public decimal TotalAmount { get; set; }
 
-        public virtual ICollection<OrderItems> OrderItems { get; set; }
+        public ICollection<OrderItems> OrderItems { get; set; }
     }
 }

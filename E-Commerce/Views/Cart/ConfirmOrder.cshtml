@@ -16,11 +16,21 @@
                 <label for="quantity">Quantity</label>
                 <input type="number" id="quantity" name="quantity" class="form-control" value="@Model.Quantity" min="1" />
             </div>
-           @*  <p class="card-text">Total Price: @(Model.Price * Model.Quantity)</p> *@
+          
             <p class="card-text">Total Price: <span id="totalPrice">@(Model.Price * Model.Quantity)</span></p>
-            <form method="post" asp-controller="Order" asp-action="PlaceOrder">
+
+            <form method="post" asp-controller="Cart" asp-action="PlaceOrder">
                 <input type="hidden" name="productId" value="@Model.ProductId" />
-                <input type="hidden" name="quantity" value="@Model.Quantity" />
+                <input type="hidden" id="formQuantity" name="quantity" value="@Model.Quantity" />
+                <div class="form-group">
+                    <label for="orderStatusId">Order Status</label>
+                    <select name="orderStatusId" id="orderStatusId" class="form-control">
+                        @foreach (var status in (List<SelectListItem>)ViewBag.OrderStatuses)
+                        {
+                            <option value="@status.Value">@status.Text</option>
+                        }
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-success">Place Order</button>
             </form>
         </div>
@@ -34,6 +44,7 @@
             var quantity = this.value;
             var totalPrice = price * quantity;
             document.getElementById('totalPrice').innerText = totalPrice;
+            document.getElementById('formQuantity').value = quantity;
         });
     </script>
 }

@@ -33,12 +33,12 @@
                                 var userRole = httpContextAccessor.HttpContext.Session.GetInt32("UserRole");
                                 if (userRole == 1) // Admin role
                                 {
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="ContactUs" asp-action="Index">Contact Us</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="ContactUs" asp-action="Index">ContactUs</a>
                                 }
                             }
                             else
                             {
-                                <a class="nav-link text-dark" asp-area="" asp-controller="ContactUs" asp-action="Create">Contact Us</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="ContactUs" asp-action="Create">ContactUs</a>
                             }
                         </li>
                         @if (!string.IsNullOrEmpty(httpContextAccessor.HttpContext.Session.GetString("UserEmail")))
@@ -53,6 +53,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users</a>
+                                </li>
                             }
                             else if (userRole == 2) // Customer role
                             {
@@ -62,12 +65,31 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">My Cart</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="OrderList">My Orders</a>
+                                </li>
                             }
                         }
                     </ul>
                     <ul class="navbar-nav">
                         @if (!string.IsNullOrEmpty(httpContextAccessor.HttpContext.Session.GetString("UserEmail")))
                         {
+                            var userRole = httpContextAccessor.HttpContext.Session.GetInt32("UserRole");
+                            if (userRole == 2) // Customer role
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">
+                                        <span class="cart-icon-container">
+                                            <img src="~/Images/CartSymbol.png" class="cart-icon" alt="Cart">
+                                            @if (ViewBag.CartCount != null && ViewBag.CartCount > 0)
+                                            {
+                                                <span class="cart-count">@ViewBag.CartCount</span>
+                                            }
+                                        </span>
+                                    </a>
+                                </li>
+                              
+                            }
                             <li class="nav-item">
                                 <a class="nav-link text-dark">Welcome, @httpContextAccessor.HttpContext.Session.GetString("UserEmail")</a>
                             </li>

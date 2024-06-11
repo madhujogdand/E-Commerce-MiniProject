@@ -13,7 +13,7 @@ namespace E_Commerce.Repositories
 
         public ProductCart ConfirmOrder(int id);
 
-       // public int PlaceOrder(Orders order);
+        public int PlaceOrder(Orders order);
 
         public int RemoveFromCartAfterOrder(int userid, int productid);
 

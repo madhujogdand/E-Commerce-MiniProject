@@ -3,6 +3,7 @@ using E_Commerce.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 namespace E_Commerce.Controllers
@@ -11,13 +12,18 @@ namespace E_Commerce.Controllers
     {
         private readonly ICartService cartService;
         private readonly IUserService userService;
-     
+        private readonly IOrderService orderService;
+        private readonly IOrderStatusService orderStatusService;
+        private readonly IProductService productService;
 
-        public CartController(ICartService cartService, IUserService userService)
+
+        public CartController(ICartService cartService, IUserService userService, IOrderService orderService, IProductService productService, IOrderStatusService orderStatusService)
         {
             this.cartService = cartService;
             this.userService = userService;
-          
+            this.orderService = orderService;
+            this.productService = productService;
+            this.orderStatusService = orderStatusService;
         }
 
         private int GetCurrentUserId()
@@ -41,7 +47,8 @@ namespace E_Commerce.Controllers
             {
                 int userId = GetCurrentUserId();
                 var cartItems = cartService.GetCartItems(userId);
-             
+                // Update cart count
+                GetCartCount();
                 return View(cartItems);
             }
             catch (Exception ex)
@@ -50,8 +57,23 @@ namespace E_Commerce.Controllers
                 return View();
             }
         }
+        public IActionResult GetCartCount()
+        {
+            try
+            {
+                int userId = GetCurrentUserId();
+                int cartCount = cartService.GetCartCount(userId);
+                ViewBag.CartCount = cartCount;
+                return View(Index);
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions appropriately
+                ViewBag.Error = ex.Message;
+                return View();
+            }
+        }
 
-       
 
         // POST: CartController/AddToCart
         [HttpPost]
@@ -62,6 +84,16 @@ namespace E_Commerce.Controllers
             try
             {
                 userId = GetCurrentUserId();
+
+                // Fetch product details
+                var product = productService.GetProductById(productId);
+                if (product.Stock <= 0)
+                {
+                    // If stock is not available, show a notification message
+                    TempData["NotifyMessage"] = "Stock not available. You will be notified when the product is back in stock.";
+                    return RedirectToAction("ProductList", "Product");
+                }
+
                 var cart = new Cart
                 {
                     UserId = userId,
@@ -126,6 +158,14 @@ namespace E_Commerce.Controllers
                 var cartItem = cartService.ConfirmOrder(cartId);
                 if (cartItem != null)
                 {
+                    var orderStatuses = orderStatusService.GetAllOrderStatus()
+                    .Select(os => new SelectListItem
+                    {
+                      Value = os.OrderStatusId.ToString(),
+                      Text = os.Status
+                    }).ToList();
+
+                    ViewBag.OrderStatuses = orderStatuses;
                     return View("ConfirmOrder", cartItem);
                 }
 
@@ -136,6 +176,73 @@ namespace E_Commerce.Controllers
             {
                 ViewBag.ErrorMessage = ex.Message;
                 return View("Index"); 
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult PlaceOrder(int productId, int quantity, int orderStatusId)
+        {
+            try
+            {
+                int userId = GetCurrentUserId();
+
+                // Retrieve cart items for the user
+                var cartItems = cartService.GetCartItems(userId);
+
+                // Calculate total amount
+                decimal totalAmount = cartItems.Sum(item => item.Price * item.Quantity);
+
+                // Create new order
+                var order = new Orders
+                {
+                    UserId = userId,
+                    OrderDate = DateTime.Now,
+                    TotalAmount = totalAmount,
+                    OrderItems = cartItems.Select(item => new OrderItems
+                    {
+                        ProductId = item.ProductId,
+                        OrderStatusId = orderStatusId,  
+                        Quantity = item.Quantity,
+                        Price = item.Price
+                    }).ToList()
+                };
+                // Place the order
+                cartService.PlaceOrder(order);
+
+                // Clear the cart after order placement
+                foreach (var item in cartItems)
+                {
+                    cartService.RemoveFromCartAfterOrder(userId, item.ProductId);
+                }
+
+                return RedirectToAction("OrderSuccess", "Order");
+            }
+
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return RedirectToAction("Index", "Cart");
+            }
+        }
+
+        public IActionResult OrderList()
+        {
+            try
+            {
+                int userId = GetCurrentUserId();
+                var orders = orderService.GetOrders(userId);
+                if (orders == null)
+                {
+                    ViewBag.ErrorMessage = "No orders found.";
+                    return View("Error");
+                }
+                return View(orders);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View("Error");
             }
         }
     }

@@ -6,9 +6,9 @@
 
 <h1>Index</h1>
 
-<p>
+@* <p>
     <a asp-action="Create">Add User</a>
-</p>
+</p> *@
 <table class="table">
     <thead>
         <tr>
@@ -48,11 +48,12 @@
           @*   <td>
                 @Html.DisplayFor(modelItem => item.ConfirmPassword)
             </td> *@
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
+                <td>
+               @*          @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }) | *@
+                    @Html.ActionLink("delete", "delete", new { id = item.Id })
+                </td>
+                
         </tr>
 }
     </tbody>

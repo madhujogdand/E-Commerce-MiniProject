@@ -10,7 +10,7 @@ namespace E_Commerce.Models
         public int ProductId { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        
         public string ProductName { get; set; }
 
         [Required]
@@ -23,10 +23,10 @@ namespace E_Commerce.Models
         [Required]
         public int Stock { get; set; }
 
-        [MaxLength(100)]
+    
         public string Description { get; set; }
 
-        [MaxLength(255)]
+        
         public string Image { get; set; }
         [NotMapped]
         public string? Categoryname { get; set; }

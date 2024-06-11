@@ -25,9 +25,11 @@ namespace E_Commerce.Controllers
         public ActionResult Index()
         {
             var model = service.GetProducts();
+         
             return View(model);
         }
      
+      
         // GET: ProductController/Details/5
         public ActionResult Details(int id)
         {

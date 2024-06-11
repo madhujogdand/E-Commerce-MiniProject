@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace E_Commerce.Models
 {
-    [Table("orderiotems")]
+    [Table("orderitems")]
     public class OrderItems
     {
 
@@ -13,16 +13,19 @@ namespace E_Commerce.Models
         public int OrderId { get; set; }
 
         public int ProductId { get; set; }
-
+        public int OrderStatusId { get; set; }
         public int Quantity { get; set; }
 
         [Column(TypeName = "decimal(10, 2)")]
         public decimal Price { get; set; }
 
         [ForeignKey("OrderId")]
-        public virtual Orders Order { get; set; }
+        public Orders Order { get; set; }
 
         [ForeignKey("ProductId")]
-        public virtual Product Product { get; set; }
+        public Product Product { get; set; }
+
+        [ForeignKey("OrderStatusId")]
+        public OrderStatus OrderStatus { get; set; }
     }
 }

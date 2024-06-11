@@ -10,9 +10,12 @@ namespace E_Commerce.Controllers
     public class UserController : Controller
     {
         public readonly IUserService service;
+   
         public UserController(IUserService service)
         {
             this.service = service;
+        
+
         }
         // GET: UserController
         public ActionResult Index()
@@ -123,6 +126,8 @@ namespace E_Commerce.Controllers
                 return View();
             }
         }
+
+
         public ActionResult Login()
         {
             return View();
@@ -141,7 +146,8 @@ namespace E_Commerce.Controllers
                 // Check if the user exists and the password matches
                 if (user != null && user.Password == login.Password)
                 {
-                    
+                   
+
                     // Store the user's email, userid and role in session
                     HttpContext.Session.SetString("UserEmail", user.Email);
                     HttpContext.Session.SetInt32("UserRole", user.RoleId);
@@ -162,6 +168,7 @@ namespace E_Commerce.Controllers
 
                         // Redirect to the product list
                         return RedirectToAction("ProductList", "Product");
+                       
                     }
                 }
 
@@ -180,5 +187,7 @@ namespace E_Commerce.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
+
+       
     }
 }

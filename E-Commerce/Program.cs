@@ -31,7 +31,11 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartRepo, CartRepo>();
 builder.Services.AddScoped<ICartService, CartService>();
 
+builder.Services.AddScoped<IOrderRepo, OrderRepo>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
+builder.Services.AddScoped<IOrderStatusRepo, OrderStatusRepo>();
+builder.Services.AddScoped<IOrderStatusService, OrderStatusService>();
 // Register IHttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 

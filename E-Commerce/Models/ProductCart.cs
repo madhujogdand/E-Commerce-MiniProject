@@ -9,6 +9,8 @@ namespace E_Commerce.Models
         public int CartId { get; set; }
         public int UserId { get; set; }
         public int ProductId { get; set; }
+        public int OrderStatusId { get; set; }
+
         public string ProductName { get; set; }
         public string Image { get; set; }
         public decimal Price { get; set; }

@@ -36,6 +36,11 @@ namespace E_Commerce.Services
         return repo.GetCartItems(userid);
         }
 
+        public int PlaceOrder(Orders order)
+        {
+          return repo.PlaceOrder(order);
+        }
+
         public int RemoveFromCart(int id)
         {
           return repo.RemoveFromCart(id);

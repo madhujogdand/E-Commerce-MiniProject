@@ -75,13 +75,13 @@ namespace E_Commerce.Repositories
             return res;
         }
 
-     
 
-        //public int PlaceOrder(Orders order)
-        //{
-        // db.orders.Add(order);
-        //    return db.SaveChanges();
-        //}
+
+        public int PlaceOrder(Orders order)
+        {
+            db.Orders.Add(order);
+            return db.SaveChanges();
+        }
 
         public int RemoveFromCart(int id)
         {
@@ -130,6 +130,6 @@ namespace E_Commerce.Repositories
             return result;
         }
 
-   
+      
     }
 }

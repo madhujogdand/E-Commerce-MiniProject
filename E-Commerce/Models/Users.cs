@@ -28,5 +28,8 @@ namespace E_Commerce.Models
 
         [ScaffoldColumn(false)]
         public int RoleId { get; set; }
+
+        [ScaffoldColumn(false)]
+        public int IsActive { get; set; } 
     }
 }
