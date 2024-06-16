@@ -1,0 +1,54 @@
+﻿@model IEnumerable<E_Commerce.Models.Orders>
+
+@{
+    ViewData["Title"] = "ListOfOrders";
+}
+
+<h1>List Of Orders</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalAmount)
+            </th>
+            <th>
+                Order Status
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDate.ToString("dd/MM/yyyy"))
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalAmount)
+            </td>
+             <td>
+                    @if (item.OrderItems != null && item.OrderItems.Any())
+                    {
+                        @Html.DisplayFor(modelItem => item.OrderItems.First().OrderStatus.Status)
+                    }
+             </td>
+        </tr>
+}
+    </tbody>
+</table>

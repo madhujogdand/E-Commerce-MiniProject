@@ -14,16 +14,18 @@ namespace E_Commerce.Models
 
         public int ProductId { get; set; }
         public int OrderStatusId { get; set; }
+        [NotMapped]
+        public int ProductName { get; set; }
         public int Quantity { get; set; }
 
         [Column(TypeName = "decimal(10, 2)")]
         public decimal Price { get; set; }
 
-        [ForeignKey("OrderId")]
-        public Orders Order { get; set; }
+        [ForeignKey("orderid")]
+        public Orders order { get; set; }
 
-        [ForeignKey("ProductId")]
-        public Product Product { get; set; }
+        //[ForeignKey("ProductId")]
+        //public Product Product { get; set; }
 
         [ForeignKey("OrderStatusId")]
         public OrderStatus OrderStatus { get; set; }

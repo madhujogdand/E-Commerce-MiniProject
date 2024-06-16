@@ -146,7 +146,12 @@ namespace E_Commerce.Controllers
                 // Check if the user exists and the password matches
                 if (user != null && user.Password == login.Password)
                 {
-                   
+                    if (user.IsActive != 1) // Assuming 1 means active and 0 means inactive
+                    {
+                        ViewBag.ErrorMsg = "Your account is inactive. Please contact admin.";
+                        return View(login);
+                    }
+
 
                     // Store the user's email, userid and role in session
                     HttpContext.Session.SetString("UserEmail", user.Email);
@@ -188,6 +193,12 @@ namespace E_Commerce.Controllers
             return RedirectToAction("Login");
         }
 
-       
+        [HttpPost]
+        public IActionResult UpdateStatus(int userId, int isActive)
+        {
+            service.UpdateUserStatus(userId, isActive);
+            return RedirectToAction("Index");
+        }
+
     }
 }

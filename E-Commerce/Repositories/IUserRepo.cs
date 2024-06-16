@@ -10,5 +10,7 @@ namespace E_Commerce.Repositories
         int AddUser(Users user);
         int EditUser(Users user);
         int DeleteUser(int id);
+
+        Users UpdateUserStatus(int userId, int isActive);
     }
 }

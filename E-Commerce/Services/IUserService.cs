@@ -10,5 +10,6 @@ namespace E_Commerce.Services
         int AddUser(Users user);
         int EditUser(Users user);
         int DeleteUser(int id);
+        Users UpdateUserStatus(int userId, int isActive);
     }
 }

@@ -10,11 +10,11 @@
         {
             <div class="col-md-3 col-sm-6 mb-4">
                 <div class="card">
-                    <img class="card-img-top" src="@Url.Content(item.Image)" alt="@item.ProductName" style="height: 200px; style="width: 50px; object-fit: cover;">
+                    <img class="card-img-top" src="@Url.Content(item.Image)" alt="@item.ProductName" style="height: 200px; width: 50px; object-fit: cover;">
                     <div class="card-body">
                         <h5 class="card-title">@item.ProductName</h5>
                         <p class="card-text">Price: @item.Price</p>
-                       
+                   
                         <form method="post" asp-controller="Cart" asp-action="ConfirmOrder" class="d-inline">
                             <input type="hidden" name="cartId" value="@item.CartId" />
                             <button type="submit" class="btn btn-success">Confirm Order</button>

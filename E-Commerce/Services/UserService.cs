@@ -40,5 +40,10 @@ namespace E_Commerce.Services
         {
             return repo.GetUsers();
         }
+
+        public Users UpdateUserStatus(int userId, int isActive)
+        {
+          return repo.UpdateUserStatus(userId, isActive);
+        }
     }
 }

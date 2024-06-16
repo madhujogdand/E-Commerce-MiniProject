@@ -1,5 +1,6 @@
 ﻿using E_Commerce.Data;
 using E_Commerce.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_Commerce.Repositories
 {
@@ -12,18 +13,29 @@ namespace E_Commerce.Repositories
         }
         public int AddToCart(Cart cart)
         {
-            bool exists = CheckIfExists(cart);
-            if (!exists)
-            {
-                db.Carts.Add(cart);
-                int res = db.SaveChanges();
-                return res;
-            }
-            else
-            {
-                return 2;
-            }
-           
+            //bool exists = CheckIfExists(cart);
+            //if (!exists)
+            //{
+            //    db.Carts.Add(cart);
+            //    int res = db.SaveChanges();
+            //    return res;
+            //}
+            //else
+            //{
+            //    return 2;
+            //}
+          
+                var existingCartItem = db.Carts.FirstOrDefault(x => x.UserId == cart.UserId && x.ProductId == cart.ProductId);
+                if (existingCartItem == null)
+                {
+                    db.Carts.Add(cart);
+                }
+                else
+                {
+                    existingCartItem.Quantity += cart.Quantity;
+                }
+                return db.SaveChanges();
+            
         }
 
         public bool CheckIfExists(Cart cart)
@@ -59,7 +71,7 @@ namespace E_Commerce.Repositories
                               ProductName = p.ProductName,
                               Price = p.Price,
                               Image = p.Image,
-                              Quantity = 1,  
+                              Quantity = c.Quantity,  
                               CartId = c.CartId,
                               UserId = c.UserId
                           }).FirstOrDefault();
@@ -125,11 +137,20 @@ namespace E_Commerce.Repositories
                               CartId = c.CartId,
                               UserId = c.UserId,
                               ProductId = p.ProductId,
-                            
+                              Quantity=c.Quantity,
                           }).ToList();
             return result;
         }
 
-      
+        public int UpdateQuantity(int cartId, int quantity)
+        {
+            var cartItem = db.Carts.FirstOrDefault(c => c.CartId == cartId);
+            if (cartItem != null)
+            {
+                cartItem.Quantity = quantity;
+                return db.SaveChanges();
+            }
+            return 0; // Cart item not found
+        }
     }
 }

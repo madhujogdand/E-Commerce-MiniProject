@@ -67,6 +67,15 @@ namespace E_Commerce.Repositories
             return model;
         }
 
-      
+        public Users UpdateUserStatus(int userId, int isActive)
+        {
+            var user = db.Users.Find(userId);
+            if (user != null)
+            {
+                user.IsActive = isActive;
+                db.SaveChanges();
+            }
+            return user;
+        }
     }
 }

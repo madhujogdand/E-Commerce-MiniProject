@@ -98,7 +98,7 @@ namespace E_Commerce.Controllers
                 {
                     UserId = userId,
                     ProductId = productId,
-                   
+                    Quantity = 1,
                 };
                 var result = cartService.AddToCart(cart);
                 if (result > 0)
@@ -181,15 +181,16 @@ namespace E_Commerce.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult PlaceOrder(int productId, int quantity, int orderStatusId)
+        public IActionResult PlaceOrder(ProductCart productcart)
         {
             try
             {
                 int userId = GetCurrentUserId();
 
+               
                 // Retrieve cart items for the user
                 var cartItems = cartService.GetCartItems(userId);
-
+               
                 // Calculate total amount
                 decimal totalAmount = cartItems.Sum(item => item.Price * item.Quantity);
 
@@ -202,7 +203,7 @@ namespace E_Commerce.Controllers
                     OrderItems = cartItems.Select(item => new OrderItems
                     {
                         ProductId = item.ProductId,
-                        OrderStatusId = orderStatusId,  
+                        OrderStatusId = 6,  
                         Quantity = item.Quantity,
                         Price = item.Price
                     }).ToList()
@@ -245,5 +246,49 @@ namespace E_Commerce.Controllers
                 return View("Error");
             }
         }
+
+        //orderList Admin side
+        public ActionResult ListOfOrders()
+        {
+            try
+            {
+                int userId = GetCurrentUserId();
+                var orders = orderService.GetOrders(userId);
+                if (orders == null)
+                {
+                    ViewBag.ErrorMessage = "No orders found.";
+                    return View("Error");
+                }
+                return View(orders);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View("Error");
+            }
+
+        }
+
+        public IActionResult UpdateQuantity(int cartId, int quantity)
+        {
+            try
+            {
+                int result = cartService.UpdateQuantity(cartId, quantity);
+                if (result > 0)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ViewBag.ErrorMsg = "Failed to update quantity.";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
     }
 }
