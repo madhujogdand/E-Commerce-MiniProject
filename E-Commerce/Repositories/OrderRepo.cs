@@ -29,7 +29,7 @@ namespace E_Commerce.Repositories
                              OrderItems = (from item in db.OrderItems
                                            where item.OrderId == order.OrderId
                                            join status in db.OrderStatus on item.OrderStatusId equals status.OrderStatusId
-                                           join p in db.Products  on item.ProductId equals p.ProductId  
+                                           join p in db.Products  on item.ProductId equals p.ProductId 
                                            select new OrderItems
                                            {
                                                OrderItemId = item.OrderItemId,
@@ -38,7 +38,8 @@ namespace E_Commerce.Repositories
                                                OrderStatusId = item.OrderStatusId,
                                                Quantity = item.Quantity,
                                                Price = item.Price,
-                                               //ProductName = item.ProductName,
+                                               ProductName = p.ProductName,
+                                               ProductImage=p.Image,
                                                OrderStatus = new OrderStatus
                                                {
                                                    OrderStatusId = status.OrderStatusId,

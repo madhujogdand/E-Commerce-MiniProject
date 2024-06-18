@@ -91,8 +91,28 @@ namespace E_Commerce.Repositories
 
         public int PlaceOrder(Orders order)
         {
-            db.Orders.Add(order);
-            return db.SaveChanges();
+            //db.Orders.Add(order);
+            //return db.SaveChanges();
+           
+                try
+                {
+                    // Assuming order.OrderItems is properly populated
+                    db.Orders.Add(order);  // This adds the order to the Orders table
+
+                    foreach (var item in order.OrderItems)
+                    {
+                        item.OrderId = order.OrderId;  // Ensure OrderId is set for each OrderItem
+                        db.OrderItems.Add(item);  // This adds each OrderItem to the OrderItems table
+                    }
+
+                    return db.SaveChanges();  // Save changes to the database
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions
+                    throw ex;  // Or return an error status
+                }
+            
         }
 
         public int RemoveFromCart(int id)

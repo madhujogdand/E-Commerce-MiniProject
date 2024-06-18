@@ -24,7 +24,9 @@
                             <table class="table mt-2">
                                 <thead>
                                     <tr>
-                                        <th>Product ID</th>
+                                      @*   <th>Product ID</th> *@
+                                        <th>Product Image</th>
+                                        <th>Product Name</th>
                                         <th>Order Status</th>
                                         <th>Quantity</th>
                                         <th>Price</th>
@@ -37,7 +39,15 @@
                                         @foreach (var item in order.OrderItems)
                                         {
                                             <tr>
-                                                <td>@item.ProductId</td>
+                                               @*  <td>@item.ProductId</td> *@
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(item.ProductImage))
+                                                    {
+                                                      @*   <img src="@item.ProductImage" alt="@item.ProductName" style="width: 50px; height: 50px;" /> *@
+                                                        <img class="card-img-top" src="@Url.Content(item.ProductImage)" alt="@item.ProductImage" style="50px; width=50px; object-fit: cover;">
+                                                    }
+                                                </td>
+                                                <td>@item.ProductName</td>
                                                 <td>@item.OrderStatus.Status</td> 
                                                 <td>@item.Quantity</td>
                                                 <td>@item.Price</td>
@@ -63,4 +73,15 @@ else
     <div class="alert alert-danger">
         @ViewBag.ErrorMessage
     </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function(){
+            $('[data-toggle="collapse"]').on('click', function(e) {
+                var target = $(this).data('target');
+                $(target).collapse('toggle');
+            });
+        });
+    </script>
 }

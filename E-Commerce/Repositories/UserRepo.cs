@@ -62,7 +62,7 @@ namespace E_Commerce.Repositories
         public IEnumerable<Users> GetUsers()
         {
             var model = (from user in db.Users
-                         where user.IsActive == 1
+                       //  where user.IsActive == 1
                          select user).ToList();
             return model;
         }

@@ -34,6 +34,7 @@ namespace E_Commerce.Controllers
             if (userId == null)
             {
                 throw new Exception("User is not authenticated");
+            
             }
 
             return userId.Value;
@@ -48,7 +49,8 @@ namespace E_Commerce.Controllers
                 int userId = GetCurrentUserId();
                 var cartItems = cartService.GetCartItems(userId);
                 // Update cart count
-                GetCartCount();
+                //GetCartCount();
+                ViewBag.CartCount = cartService.GetCartCount(userId);
                 return View(cartItems);
             }
             catch (Exception ex)
@@ -187,10 +189,10 @@ namespace E_Commerce.Controllers
             {
                 int userId = GetCurrentUserId();
 
-               
+
                 // Retrieve cart items for the user
                 var cartItems = cartService.GetCartItems(userId);
-               
+
                 // Calculate total amount
                 decimal totalAmount = cartItems.Sum(item => item.Price * item.Quantity);
 
@@ -203,7 +205,7 @@ namespace E_Commerce.Controllers
                     OrderItems = cartItems.Select(item => new OrderItems
                     {
                         ProductId = item.ProductId,
-                        OrderStatusId = 6,  
+                        OrderStatusId = 6,
                         Quantity = item.Quantity,
                         Price = item.Price
                     }).ToList()
@@ -226,6 +228,66 @@ namespace E_Commerce.Controllers
                 return RedirectToAction("Index", "Cart");
             }
         }
+
+        //public IActionResult PlaceOrder(ProductCart productCart)
+        //{
+        //    try
+        //    {
+        //        int userId = GetCurrentUserId();
+
+        //        // Retrieve cart items for the user
+        //        var cartItems = cartService.GetCartItems(userId);
+
+        //        if (cartItems == null || !cartItems.Any())
+        //        {
+        //            ViewBag.ErrorMessage = "Your cart is empty. Please add items before placing an order.";
+        //            return View("Error");
+        //        }
+
+        //        // Calculate total amount
+        //        decimal totalAmount = cartItems.Sum(item => item.Price * item.Quantity);
+
+        //        // Prepare order object
+        //        var order = new Orders
+        //        {
+        //            UserId = userId,
+        //            OrderDate = DateTime.Now,
+        //            TotalAmount = totalAmount,
+        //            OrderItems = cartItems.Select(item => new OrderItems
+        //            {
+        //                ProductId = item.ProductId,
+        //                OrderStatusId = 1, // Assuming default status for new orders
+        //                Quantity = item.Quantity,
+        //                Price = item.Price
+        //            }).ToList()
+        //        };
+
+        //        // Place the order
+        //        int orderId = cartService.PlaceOrder(order);
+
+        //        if (orderId > 0)
+        //        {
+        //            // Clear the cart after successful order placement
+        //            foreach (var item in cartItems)
+        //            {
+        //                cartService.RemoveFromCartAfterOrder(userId, item.ProductId);
+        //            }
+
+        //            return RedirectToAction("OrderSuccess", new { orderId = orderId });
+        //        }
+        //        else
+        //        {
+        //            ViewBag.ErrorMessage = "Failed to place the order. Please try again later.";
+        //            return View("Error");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ViewBag.ErrorMessage = ex.Message;
+        //        return View("Error");
+        //    }
+        //}
+
 
         public IActionResult OrderList()
         {
