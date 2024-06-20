@@ -22,11 +22,28 @@ namespace E_Commerce.Controllers
             this.env = env;
         }
         // GET: ProductController
-        public ActionResult Index()
+        public ActionResult Index(int pg = 1)
         {
             var model = service.GetProducts();
          
-            return View(model);
+           // return View(model);
+
+            const int pagesize = 5;
+            if (pg < 1)
+            {
+                pg = 1;
+            }
+            
+            int recscount = model.Count();
+
+            var pager = new Pager(recscount, pg, pagesize);
+
+            int recskip = (pg - 1) * pagesize;
+
+            var data = model.Skip(recskip).Take(pager.PageSize).ToList();
+
+            this.ViewBag.Pager = pager;
+            return View(data);
         }
      
       

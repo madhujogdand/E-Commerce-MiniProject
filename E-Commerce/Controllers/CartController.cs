@@ -183,110 +183,52 @@ namespace E_Commerce.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult PlaceOrder(ProductCart productcart)
+        public IActionResult placeorder(ProductCart productcart)
         {
             try
             {
-                int userId = GetCurrentUserId();
+                int userid = GetCurrentUserId();
 
 
-                // Retrieve cart items for the user
-                var cartItems = cartService.GetCartItems(userId);
+                // retrieve cart items for the user
+                var cartitems = cartService.GetCartItems(userid);
 
-                // Calculate total amount
-                decimal totalAmount = cartItems.Sum(item => item.Price * item.Quantity);
+                // calculate total amount
+                decimal totalamount = cartitems.Sum(item => item.Price * item.Quantity);
 
-                // Create new order
+                // create new order
                 var order = new Orders
                 {
-                    UserId = userId,
+                    UserId = userid,
                     OrderDate = DateTime.Now,
-                    TotalAmount = totalAmount,
-                    OrderItems = cartItems.Select(item => new OrderItems
+                    TotalAmount = totalamount,
+                    OrderItems = cartitems.Select(item => new OrderItems
                     {
+
                         ProductId = item.ProductId,
                         OrderStatusId = 6,
                         Quantity = item.Quantity,
                         Price = item.Price
                     }).ToList()
                 };
-                // Place the order
+                // place the order
                 cartService.PlaceOrder(order);
 
-                // Clear the cart after order placement
-                foreach (var item in cartItems)
+                // clear the cart after order placement
+                foreach (var item in cartitems)
                 {
-                    cartService.RemoveFromCartAfterOrder(userId, item.ProductId);
+                    cartService.RemoveFromCartAfterOrder(userid, item.ProductId);
                 }
 
-                return RedirectToAction("OrderSuccess", "Order");
+                return RedirectToAction("ordersuccess", "order");
             }
 
             catch (Exception ex)
             {
-                ViewBag.ErrorMessage = ex.Message;
-                return RedirectToAction("Index", "Cart");
+                ViewBag.errormessage = ex.Message;
+                return RedirectToAction("index", "cart");
             }
         }
-
-        //public IActionResult PlaceOrder(ProductCart productCart)
-        //{
-        //    try
-        //    {
-        //        int userId = GetCurrentUserId();
-
-        //        // Retrieve cart items for the user
-        //        var cartItems = cartService.GetCartItems(userId);
-
-        //        if (cartItems == null || !cartItems.Any())
-        //        {
-        //            ViewBag.ErrorMessage = "Your cart is empty. Please add items before placing an order.";
-        //            return View("Error");
-        //        }
-
-        //        // Calculate total amount
-        //        decimal totalAmount = cartItems.Sum(item => item.Price * item.Quantity);
-
-        //        // Prepare order object
-        //        var order = new Orders
-        //        {
-        //            UserId = userId,
-        //            OrderDate = DateTime.Now,
-        //            TotalAmount = totalAmount,
-        //            OrderItems = cartItems.Select(item => new OrderItems
-        //            {
-        //                ProductId = item.ProductId,
-        //                OrderStatusId = 1, // Assuming default status for new orders
-        //                Quantity = item.Quantity,
-        //                Price = item.Price
-        //            }).ToList()
-        //        };
-
-        //        // Place the order
-        //        int orderId = cartService.PlaceOrder(order);
-
-        //        if (orderId > 0)
-        //        {
-        //            // Clear the cart after successful order placement
-        //            foreach (var item in cartItems)
-        //            {
-        //                cartService.RemoveFromCartAfterOrder(userId, item.ProductId);
-        //            }
-
-        //            return RedirectToAction("OrderSuccess", new { orderId = orderId });
-        //        }
-        //        else
-        //        {
-        //            ViewBag.ErrorMessage = "Failed to place the order. Please try again later.";
-        //            return View("Error");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ViewBag.ErrorMessage = ex.Message;
-        //        return View("Error");
-        //    }
-        //}
 
 
         public IActionResult OrderList()
@@ -314,9 +256,9 @@ namespace E_Commerce.Controllers
         {
             try
             {
-                int userId = GetCurrentUserId();
-                var orders = orderService.GetOrders(userId);
-                if (orders == null)
+                //int userId = GetCurrentUserId();
+                var orders = orderService.GetAllOrders();
+                if (orders == null || !orders.Any())
                 {
                     ViewBag.ErrorMessage = "No orders found.";
                     return View("Error");

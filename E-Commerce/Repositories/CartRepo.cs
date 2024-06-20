@@ -24,18 +24,45 @@ namespace E_Commerce.Repositories
             //{
             //    return 2;
             //}
-          
-                var existingCartItem = db.Carts.FirstOrDefault(x => x.UserId == cart.UserId && x.ProductId == cart.ProductId);
-                if (existingCartItem == null)
+            try
+            {
+                var product = db.Products.FirstOrDefault(p => p.ProductId == cart.ProductId);
+
+                if (product != null && product.Stock >= cart.Quantity && cart.Quantity > 0)
                 {
-                    db.Carts.Add(cart);
+                    var existingCartItem = db.Carts.FirstOrDefault(x => x.UserId == cart.UserId && x.ProductId == cart.ProductId);
+                    if (existingCartItem == null)
+                    {
+                        db.Carts.Add(cart);
+                    }
+                    else
+                    {
+                        existingCartItem.Quantity += cart.Quantity;
+                    }
+                    return db.SaveChanges();
+                }
+                else if (product == null)
+                {
+                    throw new Exception($"Product with ID {cart.ProductId} not found.");
+                }
+                else if (product.Stock < cart.Quantity)
+                {
+                    throw new Exception($"Insufficient stock for product '{product.ProductName}'. Available stock: {product.Stock}");
+                }
+                else if (cart.Quantity <= 0)
+                {
+                    throw new Exception($"Quantity must be greater than zero.");
                 }
                 else
                 {
-                    existingCartItem.Quantity += cart.Quantity;
+                    throw new Exception("Unknown error occurred while adding to cart.");
                 }
-                return db.SaveChanges();
-            
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions as per your application's error handling strategy
+                throw new Exception("Failed to add item to cart.", ex);
+            }
         }
 
         public bool CheckIfExists(Cart cart)
@@ -91,28 +118,43 @@ namespace E_Commerce.Repositories
 
         public int PlaceOrder(Orders order)
         {
-            //db.Orders.Add(order);
-            //return db.SaveChanges();
-           
-                try
+            try
+            {
+                foreach (var item in order.OrderItems)
                 {
-                    // Assuming order.OrderItems is properly populated
-                    db.Orders.Add(order);  // This adds the order to the Orders table
+                    var product = db.Products.FirstOrDefault(p => p.ProductId == item.ProductId);
 
-                    foreach (var item in order.OrderItems)
+                    if (product != null)
                     {
-                        item.OrderId = order.OrderId;  // Ensure OrderId is set for each OrderItem
-                        db.OrderItems.Add(item);  // This adds each OrderItem to the OrderItems table
+                        // Check if sufficient stock is available
+                        if (product.Stock >= item.Quantity)
+                        {
+                            // Decrease product stock
+                            product.Stock -= item.Quantity;
+                        }
+                        else
+                        {
+                            // Insufficient stock, return an error status or message
+                            return -1; // or you can throw an exception here if needed
+                        }
                     }
+                    else
+                    {
+                        throw new Exception($"Product with ID {item.ProductId} not found.");
+                    }
+                }
 
-                    return db.SaveChanges();  // Save changes to the database
-                }
-                catch (Exception ex)
-                {
-                    // Handle exceptions
-                    throw ex;  // Or return an error status
-                }
-            
+                // Add order to Orders table
+                db.Orders.Add(order);
+                db.SaveChanges();
+
+                return order.OrderId;
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions as per your application's error handling strategy
+                throw new Exception("Failed to place order.", ex);
+            }
         }
 
         public int RemoveFromCart(int id)

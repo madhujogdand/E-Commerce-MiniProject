@@ -1,54 +1,53 @@
 ﻿@model IEnumerable<E_Commerce.Models.Orders>
 
 @{
-    ViewData["Title"] = "ListOfOrders";
+    ViewBag.Title = "Order List";
 }
 
-<h1>List Of Orders</h1>
+<h2>All Orders</h2>
 
+@if (Model == null || !Model.Any())
+{
+    <p>No orders found.</p>
+}
+else
+{
+    @foreach (var order in Model)
+    {
+        <h3>Order @order.OrderId</h3>
+       <p>User ID: @order.UserId</p>
+        <p>Order Date: @order.OrderDate</p>
+        <p>Total Amount: @order.TotalAmount</p>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TotalAmount)
-            </th>
-            <th>
-                Order Status
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderDate.ToString("dd/MM/yyyy"))
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalAmount)
-            </td>
-             <td>
-                    @if (item.OrderItems != null && item.OrderItems.Any())
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ProductId</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (order.OrderItems != null)
+                {
+                    @foreach (var item in order.OrderItems)
                     {
-                        @Html.DisplayFor(modelItem => item.OrderItems.First().OrderStatus.Status)
+                        <tr>
+                            <td>@item.ProductId</td> 
+                            <td>@item.Quantity</td>
+                            <td>@item.Price</td>
+                            <td>@item.OrderStatus?.Status</td> 
+                        </tr>
                     }
-             </td>
-        </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4">No items found for this order.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 }
-    </tbody>
-</table>

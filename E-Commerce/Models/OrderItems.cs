@@ -24,8 +24,8 @@ namespace E_Commerce.Models
         [Column(TypeName = "decimal(10, 2)")]
         public decimal Price { get; set; }
 
-        [ForeignKey("orderid")]
-        public Orders order { get; set; }
+        [ForeignKey("OrderId")]
+        public Orders Order { get; set; }
 
         [ForeignKey("ProductId")]
         public Product Product { get; set; }

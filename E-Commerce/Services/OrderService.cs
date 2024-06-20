@@ -11,11 +11,19 @@ namespace E_Commerce.Services
         {
             this.repo = repo;
         }
+
+   
+
         public IEnumerable<Orders> GetOrders(int userId)
         {
-          return repo.GetOrders(userId);
+            return repo.GetOrders(userId);
         }
 
-       
+        public IEnumerable<Orders> GetAllOrders()
+        {
+         return repo.GetAllOrders();
+        }
+
+
     }
 }

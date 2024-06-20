@@ -6,5 +6,6 @@ namespace E_Commerce.Services
     {
       
         IEnumerable<Orders> GetOrders(int userId);
+        IEnumerable<Orders> GetAllOrders();
     }
 }

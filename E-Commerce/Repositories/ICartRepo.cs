@@ -19,6 +19,7 @@ namespace E_Commerce.Repositories
 
         public int GetCartCount(int userid);
         int UpdateQuantity(int cartId, int quantity);
+      
 
     }
 }
