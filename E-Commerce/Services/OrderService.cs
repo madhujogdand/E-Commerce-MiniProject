@@ -24,6 +24,9 @@ namespace E_Commerce.Services
          return repo.GetAllOrders();
         }
 
-
+        public int UpdateOrderStatus(int orderItemId, int orderStatusId)
+        {
+          return repo.UpdateOrderStatus(orderItemId, orderStatusId);
+        }
     }
 }

@@ -8,10 +8,13 @@ namespace E_Commerce.Controllers
     public class OrderStatusController : Controller
     {
         private readonly IOrderStatusService service;
+        
 
         public OrderStatusController(IOrderStatusService service)
         {
             this.service = service;
+           
+
         }
         // GET: OrderStatusController
         public ActionResult Index()
@@ -122,5 +125,8 @@ namespace E_Commerce.Controllers
                 return View();
             }
         }
+
+       
+
     }
 }

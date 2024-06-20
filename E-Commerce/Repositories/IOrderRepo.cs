@@ -7,5 +7,6 @@ namespace E_Commerce.Repositories
      
         IEnumerable<Orders> GetOrders(int userId);
         IEnumerable<Orders> GetAllOrders();
+        int UpdateOrderStatus(int orderItemId, int orderStatusId);
     }
 }

@@ -252,17 +252,48 @@ namespace E_Commerce.Controllers
         }
 
         //orderList Admin side
-        public ActionResult ListOfOrders()
+        //public ActionResult ListOfOrders()
+        //{
+        //    try
+        //    {
+        //        //int userId = GetCurrentUserId();
+        //        var orders = orderService.GetAllOrders();
+        //        if (orders == null || !orders.Any())
+        //        {
+        //            ViewBag.ErrorMessage = "No orders found.";
+        //            return View("Error");
+        //        }
+        //        return View(orders);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ViewBag.ErrorMessage = ex.Message;
+        //        return View("Error");
+        //    }
+
+        //}
+
+        public IActionResult ListOfOrders()
         {
             try
             {
-                //int userId = GetCurrentUserId();
                 var orders = orderService.GetAllOrders();
                 if (orders == null || !orders.Any())
                 {
                     ViewBag.ErrorMessage = "No orders found.";
                     return View("Error");
                 }
+
+                // Fetch order status options
+                var orderStatuses = orderStatusService.GetAllOrderStatus()
+                    .Select(os => new SelectListItem
+                    {
+                        Value = os.OrderStatusId.ToString(),
+                        Text = os.Status
+                    }).ToList();
+
+                ViewBag.OrderStatuses = orderStatuses;
+
                 return View(orders);
             }
             catch (Exception ex)
@@ -270,9 +301,7 @@ namespace E_Commerce.Controllers
                 ViewBag.ErrorMessage = ex.Message;
                 return View("Error");
             }
-
         }
-
         public IActionResult UpdateQuantity(int cartId, int quantity)
         {
             try
@@ -294,5 +323,28 @@ namespace E_Commerce.Controllers
             }
         }
 
+
+        [HttpPost]
+        public IActionResult UpdateOrderStatus(int orderItemId, int orderStatusId)
+        {
+            try
+            {
+                var result = orderService.UpdateOrderStatus(orderItemId, orderStatusId);
+                if (result > 0)
+                {
+                    return RedirectToAction("ListOfOrders", "Cart");
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = "Order item not found.";
+                    return View("Error");
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View("Error");
+            }
+        }
     }
 }

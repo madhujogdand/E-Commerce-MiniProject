@@ -87,5 +87,15 @@ namespace E_Commerce.Repositories
         
         }
 
+        public int UpdateOrderStatus(int orderItemId, int orderStatusId)
+        {
+            var orderItem = db.OrderItems.FirstOrDefault(item => item.OrderItemId == orderItemId);
+            if (orderItem != null)
+            {
+                orderItem.OrderStatusId = orderStatusId;
+                return db.SaveChanges();
+            }
+            return 0;
+        }
     }
 }
